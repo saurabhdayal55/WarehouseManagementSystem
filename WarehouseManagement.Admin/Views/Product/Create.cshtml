@@ -1,0 +1,43 @@
+﻿@model ProductViewModel
+
+<h2 class="text-center mb-4">Create Product</h2>
+
+<form asp-action="Create" method="post">
+    <div class="card p-4 shadow-sm">
+        <div class="form-group mb-3">
+            <label asp-for="NewProduct.ProductCode" class="form-label"></label>
+            <input asp-for="NewProduct.ProductCode" class="form-control" required placeholder="Enter Product Code" />
+            <span asp-validation-for="NewProduct.ProductCode" class="text-danger"></span>
+        </div>
+
+        <div class="form-group mb-3">
+            <label asp-for="NewProduct.ProductName" class="form-label"></label>
+            <input asp-for="NewProduct.ProductName" class="form-control" required placeholder="Enter Product Name" />
+            <span asp-validation-for="NewProduct.ProductName" class="text-danger"></span>
+        </div>
+
+        <div class="form-group mb-3">
+            <label asp-for="NewProduct.ProductTypeID" class="form-label">Product Type</label>
+            <select asp-for="NewProduct.ProductTypeID" asp-items="@(new SelectList(Model.ProductTypes, "ProductTypeID", "ProductTypeName"))" class="form-select">
+                <option value="">-- Select Product Type --</option>
+            </select>
+            <span asp-validation-for="NewProduct.ProductTypeID" class="text-danger"></span>
+        </div>
+
+        <div class="form-group mb-3">
+            <label asp-for="NewProduct.WarrantyDate" class="form-label"></label>
+            <input asp-for="NewProduct.WarrantyDate" type="date" class="form-control" />
+            <span asp-validation-for="NewProduct.WarrantyDate" class="text-danger"></span>
+        </div>
+
+        <div class="form-group mb-3">
+            <label asp-for="NewProduct.CurrentQuantity" class="form-label"></label>
+            <input asp-for="NewProduct.CurrentQuantity" type="number" class="form-control" required placeholder="Enter Quantity" />
+            <span asp-validation-for="NewProduct.CurrentQuantity" class="text-danger"></span>
+        </div>
+
+        <div class="text-center">
+            <button type="submit" class="btn btn-success btn-lg mt-3">Create Product</button>
+        </div>
+    </div>
+</form>

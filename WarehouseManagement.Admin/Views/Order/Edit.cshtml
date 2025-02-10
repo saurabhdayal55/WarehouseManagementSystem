@@ -1,0 +1,138 @@
+﻿@model Order
+
+<div class="container mt-4">
+    <div class="card shadow-lg border-0">
+    <div class="card-header bg-primary text-white text-center">
+        <h3 class="mb-0">Edit Order</h3>
+    </div>
+    <div class="card-body">
+    <form asp-action="Edit" method="post">
+        <input type="hidden" asp-for="OrderID" />
+
+        <div class="card p-4 shadow-sm">
+            <h5 class="mb-3 text-secondary">Customer Details</h5>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="CustomerName" class="font-weight-bold">Customer Name</label>
+                        <input asp-for="CustomerName" class="form-control" required />
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="CustomerAddress" class="font-weight-bold">Customer Address</label>
+                        <input asp-for="CustomerAddress" class="form-control" required />
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="OrderDate" class="font-weight-bold">Order Date</label>
+                <input asp-for="OrderDate" type="date" class="form-control" required />
+            </div>
+        </div>
+
+        <div class="card p-4 shadow-sm mt-4">
+            <h5 class="mb-3 text-secondary">Products in Order</h5>
+            <table class="table table-bordered mt-3">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Product Name</th>
+                        <th style="width: 120px;">Quantity</th>
+                        <th style="width: 80px;">Action</th>
+                    </tr>
+                </thead>
+                <tbody id="orderItemsTable">
+                    @for (int i = 0; i < Model.OrderItems.Count; i++)
+                    {
+                        <tr>
+                            <td>
+                                @Model.OrderItems[i].ProductName
+                                <input type="hidden" name="OrderItems[@i].ProductID" value="@Model.OrderItems[i].ProductID" />
+                            </td>
+                            <td>
+                                <input asp-for="OrderItems[i].Quantity" class="form-control text-center" min="1" required />
+                            </td>
+                            <td>
+                                <button type="button" class="btn btn-danger btn-sm removeProduct">
+                                    <i class="fas fa-trash-alt"></i> Remove
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <div class="card p-4 shadow-sm mt-4">
+            <h5 class="mb-3 text-secondary">Add New Product</h5>
+            <div class="row">
+                <div class="col-md-6">
+                    <select id="newProductId" class="form-control">
+                        <option value="">-- Select Product --</option>
+                        @foreach (var product in Model.AvailableProducts)
+                        {
+                            <option value="@product.ProductID">@product.ProductName</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <input type="number" id="newQuantity" class="form-control" placeholder="Quantity" min="1" />
+                </div>
+                <div class="col-md-3">
+                    <button type="button" id="addProductBtn" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Add Product
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <br />
+        <button type="submit" class="btn btn-success btn-lg">
+            <i class="fas fa-save"></i> Update Order
+        </button>
+    </form>
+    </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById("addProductBtn").addEventListener("click", function () {
+        let productDropdown = document.getElementById("newProductId");
+        let productId = productDropdown.value;
+        let productName = productDropdown.options[productDropdown.selectedIndex].text;
+        let quantity = document.getElementById("newQuantity").value;
+
+        if (!productId) {
+            alert("Please select a product.");
+            return;
+        }
+        if (quantity <= 0) {
+            alert("Quantity must be at least 1.");
+            return;
+        }
+
+        let table = document.getElementById("orderItemsTable");
+        let rowIndex = table.rows.length;
+        let row = `<tr>
+                            <td>${productName}
+                                <input type="hidden" name="OrderItems[${rowIndex}].ProductID" value="${productId}" />
+                            </td>
+                            <td>
+                                <input type="number" name="OrderItems[${rowIndex}].Quantity" value="${quantity}" class="form-control text-center" min="1" required />
+                            </td>
+                            <td>
+                                <button type="button" class="btn btn-danger btn-sm removeProduct">
+                                    <i class="fas fa-trash-alt"></i> Remove
+                                </button>
+                            </td>
+                       </tr>`;
+        table.insertAdjacentHTML("beforeend", row);
+    });
+
+    document.getElementById("orderItemsTable").addEventListener("click", function (event) {
+        if (event.target.closest(".removeProduct")) {
+            event.target.closest("tr").remove();
+        }
+    });
+</script>
